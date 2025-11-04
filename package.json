@@ -28,5 +28,12 @@
   "bugs": {
     "url": "https://github.com/fasakinhenry/taskpal-api/issues"
   },
-  "homepage": "https://github.com/fasakinhenry/taskpal-api#readme"
+  "homepage": "https://github.com/fasakinhenry/taskpal-api#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.3"
+  }
 }

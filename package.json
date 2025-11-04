@@ -1,0 +1,32 @@
+{
+  "name": "taskpal-api",
+  "version": "1.0.0",
+  "description": "A marketplace where users can post small tasks(errands,repairs, deliveries) and others can accept them for a fee.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fasakinhenry/taskpal-api.git"
+  },
+  "keywords": [
+    "taskpal",
+    "api",
+    "marketplace",
+    "tasks",
+    "errands",
+    "nodeJS",
+    "express",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/fasakinhenry/taskpal-api/issues"
+  },
+  "homepage": "https://github.com/fasakinhenry/taskpal-api#readme"
+}

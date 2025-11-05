@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const { PORT } = require('./constants/app');
 // create the express application

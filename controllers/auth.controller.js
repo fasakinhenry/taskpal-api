@@ -19,8 +19,8 @@ class AuthController {
       }
 
       // Hash the password
-      const salt = bcrypt.genSalt(10);
-      const hashedPassword = bcrypt.hash(password, salt);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       // create a new user from the request body
       const newUser = new User({

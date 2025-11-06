@@ -1,4 +1,4 @@
-const Task = require('../models/task.models');
+const Task = require('../models/Task');
 
 class TaskController {
   static async createTask(req, res) {}

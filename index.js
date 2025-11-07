@@ -1,21 +1,34 @@
 require('dotenv').config();
-const express = require('express');
+const http = require('http');
+const app = require('./app');
+const connectDB = require('./database/db');
 const { PORT } = require('./constants/app');
-const connectToDB = require('./database/db');
-const authRoutes = require('./routes/auth.route');
 
-// create the express application
-const app = express();
+const start = async () => {
+  try {
+    const MONGO_URI = process.env.MONGO_URI;
+    await connectDB(MONGO_URI);
 
-// Connect to database
-connectToDB();
+    const server = http.createServer(app);
 
-// Add middleware to parse JSON
-app.use(express.json());
+    server.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
 
-// Handle routing
-app.use('/api/auth', authRoutes)
+    // graceful shutdown
+    process.on('SIGINT', () => {
+      console.log('SIGINT received, shutting down');
+      server.close(() => process.exit(0));
+    });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM received, shutting down');
+      server.close(() => process.exit(0));
+    });
+  } catch (err) {
+    console.error('Failed to start server', err);
+    process.exit(1);
+  }
+};
+
+start();

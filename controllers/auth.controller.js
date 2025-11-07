@@ -1,55 +1,64 @@
 const User = require('../models/User');
+const Joi = require('joi');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const response = require('../utils/response');
+const { signToken, cookieOptions } = require('../utils/jwt');
+const { BCRYPT_SALT_ROUNDS } = require('../constants/app');
 
 class AuthController {
-  static async register(req, res) {
+  static async register(req, res, next) {
+    const schema = Joi.object({
+      name: Joi.string().min(2).required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().min(6).required(),
+    });
+
     try {
-      // Get user info from request body
-      const { name, email, password } = req.body;
+      const { error, value } = schema.validate(req.body);
+
+      if (error) return response(res, 422, error.details[0].message);
+
+      // Get user info from request body stored in joi value
+      const { name, email, password } = value;
 
       // Check if the email exists in the database already
-      const checkExisitingUser = await User.findOne({ email });
-      if (checkExisitingUser) {
-        return res.status(400).json({
-          success: false,
-          message:
-            'User with the same email already exists. Please try with a different email',
-        });
-      }
+      const userExists = await User.findOne({ email });
+      if (userExists) return response(res, 409, 'Email already registered');
 
       // Hash the password
-      const salt = await bcrypt.genSalt(10);
+      const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
       const hashedPassword = await bcrypt.hash(password, salt);
 
       // create a new user from the request body
-      const newUser = new User({
+      const user = await User.create({
         name,
         email,
         password: hashedPassword,
         isVerified: false,
       });
 
-      // store the user info in the database
-      await newUser.save();
+      const token = signToken({ id: user._id });
 
-      if (newUser) {
-        res.status(201).json({
-          success: true,
-          message: 'User created successfully',
-        });
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Unable to register user. Please try again',
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        success: false,
-        message: 'Something went wrong. Please try again',
+      // set cookie
+      res.cookie('token', token, cookieOptions);
+
+      // return safe user
+      const safeUser = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        skills: user.skills,
+        rating: user.rating,
+        createdAt: user.createdAt,
+      };
+
+      return response(res, 201, 'User registered successfully', {
+        token,
+        user: safeUser,
       });
+    } catch (error) {
+      next(err);
     }
   }
   static async login(req, res) {

@@ -90,8 +90,8 @@ class AuthController {
       if (!isPasswordMatching) return response(res, 401, 'Invalid credentials');
 
       // create a token
-      const accessToken = signToken({ id: user._id });
-      res.cookie('token', accessToken, cookieOptions);
+      const token = signToken({ id: user._id });
+      res.cookie('token', token, cookieOptions);
 
       const safeUser = {
         id: user._id,

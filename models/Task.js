@@ -23,7 +23,7 @@ const TaskSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Open', 'accepted', 'completed', 'paid'],
+      enum: ['open', 'accepted', 'completed', 'paid'],
       default: 'open',
     },
     createdBy: {

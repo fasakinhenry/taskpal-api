@@ -32,7 +32,7 @@ class TaskController {
 
       return response(res, 201, 'Task created', { task });
     } catch (error) {
-      next(err);
+      next(error);
     }
   }
   // GET /api/tasks?limit=10&cursor=base64&status=open
@@ -75,7 +75,7 @@ class TaskController {
         nextCursor,
       });
     } catch (error) {
-      next(err);
+      next(error);
     }
   }
 
@@ -88,8 +88,8 @@ class TaskController {
         .populate('acceptedBy', 'name email');
       if (!task) return response(res, 404, 'Task not found');
       return response(res, 200, 'Task fetched', { task });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -116,8 +116,8 @@ class TaskController {
       });
 
       return response(res, 200, 'Task accepted', { task });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -142,8 +142,8 @@ class TaskController {
       await task.save();
 
       return response(res, 200, 'Task marked as completed', { task });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -169,8 +169,8 @@ class TaskController {
       await task.save();
 
       return response(res, 200, 'Task marked as paid', { task });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -203,8 +203,8 @@ class TaskController {
       await task.save();
 
       return response(res, 200, 'Task updated', { task });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -228,8 +228,8 @@ class TaskController {
       });
 
       return response(res, 200, 'Task deleted');
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 }

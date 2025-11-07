@@ -61,56 +61,47 @@ class AuthController {
       next(err);
     }
   }
-  static async login(req, res) {
-    // Create a token using jwt.sign
+  static async login(req, res, next) {
+    const schema = Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    });
+
     try {
+      const { error, value } = schema.validate(req.body);
+
+      if (error) return response(res, 422, error.details[0].message);
+
       // Get email and password from the user
-      const { email, password } = req.body;
+      const { email, password } = value;
 
       // Use email to find the particular user
       const user = await User.findOne({ email });
 
       // check if email does not exist and return error
-      if (!user) {
-        return res.status(400).json({
-          success: false,
-          message: 'User does not exist',
-        });
-      }
+      if (!user) return response(res, 401, 'Invalid credentials');
 
       // Compare password passed in request body with the one from the database(user.password)
-      const isPasswordMatching = bcrypt.compare(password, user.password);
+      const isPasswordMatching = await bcrypt.compare(password, user.password);
 
-      if (!isPasswordMatching) {
-        return res.status(400).json({
-          success: false,
-          message: 'invalid Credentials!',
-        });
-      }
+      if (!isPasswordMatching) return response(res, 401, 'Invalid credentials');
 
       // create a token
-      const accessToken = jwt.sign(
-        {
-          userId: user._id,
-          name: user.name,
-          isVerified: user.isVerified,
-        },
-        process.env.JWT_SECRET_KEY,
-        {
-          expiresIn: '30m',
-        }
-      );
-      res.status(200).json({
-        success: true,
-        message: 'Logged in successfully',
-        accessToken,
-      });
+      const accessToken = signToken({ id: user._id });
+      res.cookie('token', accessToken, cookieOptions);
+
+      const safeUser = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        skills: user.skills,
+        rating: user.rating,
+        createdAt: user.createdAt,
+      };
+
+      return response(res, 200, 'Logged in successfully', { token, user: safeUser });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        success: false,
-        message: 'Something went wrong. Please try again',
-      });
+      next(err);
     }
   }
   static async me(req, res) {

@@ -18,14 +18,26 @@ class UserController {
       next(error);
     }
   }
+
   // GET /api/users/:id/tasks/posted
   static async postedTasks(req, res, next) {
     try {
-        const { id } = req.params;
-        const tasks = await Task.find({ createdBy: id }).sort({ createdAt: -1 });
-        return response(res, 200, 'Posted tasks fetched successfully', {tasks});
+      const { id } = req.params;
+      const tasks = await Task.find({ createdBy: id }).sort({ createdAt: -1 });
+      return response(res, 200, 'Posted tasks fetched successfully', { tasks });
     } catch (error) {
-        next(error);
+      next(error);
+    }
+  }
+
+  // GET /api/users/:id/tasks/accepted
+  static async acceptedTasks(req, res, next) {
+    try {
+      const { id } = req.params;
+      const tasks = await Task.find({ acceptedBy: id }).sort({ createdAt: -1 });
+      return response(res, 200, 'Accepted tasks fetched', { tasks });
+    } catch (err) {
+      next(err);
     }
   }
 }

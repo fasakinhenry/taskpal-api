@@ -79,4 +79,4 @@ const response = (res, code, message, data) => {
   });
 };
 
-export default response;
+module.exports = response;

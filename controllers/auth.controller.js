@@ -59,7 +59,7 @@ class AuthController {
         user: safeUser,
       });
     } catch (error) {
-      next(err);
+      next(error);
     }
   }
 
@@ -107,7 +107,7 @@ class AuthController {
         user: safeUser,
       });
     } catch (error) {
-      next(err);
+      next(error);
     }
   }
 
@@ -121,8 +121,8 @@ class AuthController {
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       });
       return response(res, 200, 'Logged out successfully');
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -131,8 +131,8 @@ class AuthController {
     try {
       if (!req.user) return response(res, 401, 'Unauthorized');
       return response(res, 200, 'User fetched', { user: req.user });
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -141,8 +141,8 @@ class AuthController {
     try {
       console.log('Google Auth coming soon');
       return response(res, 501, 'Google OAuth coming soon');
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 }

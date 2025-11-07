@@ -1,12 +1,18 @@
 const mongoose = require('mongoose');
+const { IS_PRODUCTION } = require('../constants/app');
 
-const connectToDB = async () => {
+const connectDB = async (mongoUri) => {
+  if (!mongoUri) throw new Error('MONGO_URI is required');
   try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('MongoDB is connected successfully');
-  } catch (error) {
-    console.log('Unable to connect to MongoDB', error);
+    await mongoose.connect(mongoUri, {
+      // useNewUrlParser: true,
+      // useUnifiedTopology: true,
+    });
+    if (!IS_PRODUCTION) console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    throw err;
   }
 };
 
-module.exports = connectToDB;
+module.exports = connectDB;

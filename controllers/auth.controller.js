@@ -7,6 +7,7 @@ const { signToken, cookieOptions } = require('../utils/jwt');
 const { BCRYPT_SALT_ROUNDS } = require('../constants/app');
 
 class AuthController {
+  // POST /api/auth/register
   static async register(req, res, next) {
     const schema = Joi.object({
       name: Joi.string().min(2).required(),
@@ -61,6 +62,8 @@ class AuthController {
       next(err);
     }
   }
+
+  // POST /api/auth/login
   static async login(req, res, next) {
     const schema = Joi.object({
       email: Joi.string().email().required(),
@@ -99,15 +102,48 @@ class AuthController {
         createdAt: user.createdAt,
       };
 
-      return response(res, 200, 'Logged in successfully', { token, user: safeUser });
+      return response(res, 200, 'Logged in successfully', {
+        token,
+        user: safeUser,
+      });
     } catch (error) {
       next(err);
     }
   }
-  static async me(req, res) {
-    res.json({
-      message: 'Welcome to the Profile route',
-    });
+
+  // POST /api/auth/logout
+  static async logout(req, res, next) {
+    try {
+      // clear cookie
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      });
+      return response(res, 200, 'Logged out successfully');
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // GET /api/auth/me
+  static async me(req, res, next) {
+    try {
+      if (!req.user) return response(res, 401, 'Unauthorized');
+      return response(res, 200, 'User fetched', { user: req.user });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // Placeholder for Google OAuth (version 2)
+  static async googleOAuthPlaceholder(req, res, next) {
+    try {
+      console.log('Google Auth coming soon');
+      return response(res, 501, 'Google OAuth coming soon');
+    } catch (err) {
+      next(err);
+    }
   }
 }
 

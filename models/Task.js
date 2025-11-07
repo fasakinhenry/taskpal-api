@@ -5,32 +5,37 @@ const TaskSchema = new mongoose.Schema(
     title: {
       type: String,
       required: [true, 'Title is required'],
+      trim: true,
     },
     description: {
       type: String,
       required: [true, 'description is required'],
     },
-    budget: Number,
-    location: String,
-    category: String,
+    budget: {
+      type: Number,
+      required: true,
+    },
+    location: {
+      type: String,
+    },
+    category: {
+      type: String,
+    },
     status: {
-        type: String,
-        enum: ["Open", "accepted", "completed", "paid"],
-        default: "open"
+      type: String,
+      enum: ['Open', 'accepted', 'completed', 'paid'],
+      default: 'open',
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      required: true,
     },
     acceptedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
+      default: null,
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: Date
   },
   { timestamps: true }
 );

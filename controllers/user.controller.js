@@ -40,6 +40,18 @@ class UserController {
       next(err);
     }
   }
+
+  // GET /api/users/:id (public profile)
+  static async getUser(req, res, next) {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id).select('-password').lean();
+      if (!user) return response(res, 404, 'User not found');
+      return response(res, 200, 'User fetched', { user });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = UserController;
